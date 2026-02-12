@@ -14,6 +14,26 @@ const multipliers = {
 	firefox: isWindows ? firefoxMultiplier * 2 : firefoxMultiplier
 }
 
+/** CURSOR TAG **/
+const cursorTag = document.querySelector('.js-cursor')
+let cursorX = 0, cursorY = 0
+let cursorSmoothX = 0, cursorSmoothY = 0
+
+window.addEventListener('mousemove', (e) => {
+	cursorX = e.clientX
+	cursorY = e.clientY
+	if (!cursorTag.classList.contains('is-visible')) {
+		cursorTag.classList.add('is-visible')
+	}
+})
+
+gsap.ticker.add(() => {
+	cursorSmoothX += (cursorX - cursorSmoothX) * 0.08
+	cursorSmoothY += (cursorY - cursorSmoothY) * 0.08
+	cursorTag.style.left = cursorSmoothX + 'px'
+	cursorTag.style.top = cursorSmoothY + 'px'
+})
+
 /** POPUP **/
 const popupOverlay = document.querySelector('.js-popup-overlay')
 const popup = document.querySelector('.js-popup')
@@ -23,12 +43,14 @@ function openPopup() {
 	if (popupOpen) return
 	popupOpen = true
 	popupOverlay.classList.add('is-active')
+	cursorTag.classList.remove('is-visible')
 }
 
 function closePopup() {
 	if (!popupOpen) return
 	popupOpen = false
 	popupOverlay.classList.remove('is-active')
+	cursorTag.classList.add('is-visible')
 }
 
 popupOverlay.addEventListener('click', (e) => {

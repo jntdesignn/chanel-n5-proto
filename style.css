@@ -17,6 +17,28 @@ body{
 	background: #211D1C;
 }
 
+.cursor-tag{
+	position: fixed;
+	z-index: 20;
+	pointer-events: none;
+	background: #d4cfc8;
+	color: #211D1C;
+	font-family: 'Times New Roman', Times, serif;
+	font-size: 14px;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	padding: 10px 22px;
+	border-radius: 50px;
+	white-space: nowrap;
+	transform: translate(15px, 15px);
+	opacity: 0;
+	transition: opacity 0.3s ease;
+
+	&.is-visible{
+		opacity: 1;
+	}
+}
+
 .grid{
 	position: fixed;
 	top: 0; left: 0;
