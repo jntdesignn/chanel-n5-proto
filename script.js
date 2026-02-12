@@ -34,23 +34,101 @@ gsap.ticker.add(() => {
 	cursorTag.style.top = cursorSmoothY + 'px'
 })
 
+/** MUSIC **/
+const ambiantMusic = new Audio('sound%20effect/ambiant.mp3')
+ambiantMusic.loop = true
+ambiantMusic.volume = 0.4
+let musicEnabled = true
+let musicStarted = false
+
+const soundBtn = document.querySelector('.js-sound-btn')
+
+function startMusic() {
+	if (musicStarted) return
+	musicStarted = true
+	ambiantMusic.play()
+}
+
+/** INTRO **/
+const intro = document.querySelector('.js-intro')
+const introBtn = intro.querySelector('.intro-btn')
+
+introBtn.addEventListener('click', () => {
+	intro.classList.add('is-hidden')
+	startMusic()
+	setTimeout(() => { intro.style.display = 'none' }, 800)
+})
+
+soundBtn.addEventListener('click', (e) => {
+	e.stopPropagation()
+	musicEnabled = !musicEnabled
+	soundBtn.classList.toggle('is-muted')
+	if (musicEnabled) {
+		ambiantMusic.play()
+	} else {
+		ambiantMusic.pause()
+	}
+})
+
 /** POPUP **/
 const popupOverlay = document.querySelector('.js-popup-overlay')
 const popup = document.querySelector('.js-popup')
+const pencilSound = new Audio('sound%20effect/pencil.mp3')
 let popupOpen = false
+
+const popupImg = popup.querySelector('img')
 
 function openPopup() {
 	if (popupOpen) return
 	popupOpen = true
 	popupOverlay.classList.add('is-active')
 	cursorTag.classList.remove('is-visible')
+	pencilSound.currentTime = 0
+	pencilSound.play()
+	if (musicEnabled) ambiantMusic.pause()
+
+	gsap.killTweensOf(popupImg)
+	gsap.set(popupImg, {
+		opacity: 0,
+		scaleY: 0.01,
+		scaleX: 0.6,
+		rotateX: 10,
+		transformOrigin: 'center bottom',
+		boxShadow: '0 30px 80px rgba(0,0,0,0)'
+	})
+
+	gsap.to(popupImg, {
+		opacity: 1,
+		scaleY: 1,
+		scaleX: 1,
+		rotateX: 0,
+		boxShadow: '0 30px 80px rgba(0,0,0,0.5)',
+		duration: 0.8,
+		ease: 'power3.out',
+		delay: 0.05
+	})
 }
 
 function closePopup() {
 	if (!popupOpen) return
 	popupOpen = false
-	popupOverlay.classList.remove('is-active')
 	cursorTag.classList.add('is-visible')
+
+	if (musicEnabled) ambiantMusic.play()
+
+	gsap.killTweensOf(popupImg)
+	gsap.to(popupImg, {
+		opacity: 0,
+		scaleY: 0.01,
+		scaleX: 0.6,
+		rotateX: 10,
+		boxShadow: '0 30px 80px rgba(0,0,0,0)',
+		duration: 0.4,
+		ease: 'power2.in',
+		onComplete: () => {
+			popupOverlay.classList.remove('is-active')
+		}
+	})
 }
 
 popupOverlay.addEventListener('click', (e) => {
